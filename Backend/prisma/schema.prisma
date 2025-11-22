@@ -10,6 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OperationType {
+  INCOMING
+  OUTGOING
+  INTERNAL
+  ADJUSTMENT
+}
+
+enum MoveStatus {
+  DRAFT
+  WAITING
+  READY
+  DONE
+  CANCELLED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -36,19 +51,20 @@ model Category {
 
 // Product model for inventory items
 model Product {
-  id            Int       @id @default(autoincrement())
-  sku           String    @unique
+  id            Int         @id @default(autoincrement())
+  sku           String      @unique
   name          String
   description   String?
   categoryId    Int?
-  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category      Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   unitOfMeasure String // e.g., "kg", "pcs", "liter"
-  unitPrice     Float     @default(0)
-  minStock      Int       @default(0) // Minimum stock threshold for alerts
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  unitPrice     Float       @default(0)
+  minStock      Int         @default(0) // Minimum stock threshold for alerts
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   stocks        Stock[]
+  stockMoves    StockMove[]
 
   @@index([sku])
   @@index([categoryId])
@@ -56,16 +72,19 @@ model Product {
 
 // Warehouse model for multi-location inventory
 model Warehouse {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  code      String     @unique
-  address   String?
-  capacity  Int? // Optional warehouse capacity
-  isActive  Boolean    @default(true)
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  stocks    Stock[]
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  code        String       @unique
+  address     String?
+  capacity    Int? // Optional warehouse capacity
+  isActive    Boolean      @default(true)
+  locations   Location[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  stocks      Stock[]
+  receipts    Receipt[]
+  deliveries  Delivery[]
+  adjustments Adjustment[]
 
   @@index([code])
 }
@@ -77,10 +96,18 @@ model Location {
   code        String    @unique
   warehouseId Int
   warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
-  type        String    @default("ZONE") // ZONE, RACK, SHELF, BIN
+  type        String    @default("ZONE") // ZONE, RACK, SHELF, BIN, VENDOR, CUSTOMER, INVENTORY_LOSS
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   stocks      Stock[]
+
+  // Relations for movements
+  sourceMoves      StockMove[] @relation("SourceLocation")
+  destinationMoves StockMove[] @relation("DestinationLocation")
+
+  // Relations for Transfer headers
+  sourceTransfers Transfer[] @relation("TransferSource")
+  destTransfers   Transfer[] @relation("TransferDest")
 
   @@unique([warehouseId, name])
   @@index([code])
@@ -103,4 +130,88 @@ model Stock {
   warehouse Warehouse @relation(fields: [warehouseId], references: [id])
 
   @@unique([productId, locationId, warehouseId])
+}
+
+// --- New Models ---
+
+model StockMove {
+  id                    Int           @id @default(autoincrement())
+  reference             String?
+  productId             Int
+  product               Product       @relation(fields: [productId], references: [id])
+  sourceLocationId      Int?
+  sourceLocation        Location?     @relation("SourceLocation", fields: [sourceLocationId], references: [id])
+  destinationLocationId Int?
+  destinationLocation   Location?     @relation("DestinationLocation", fields: [destinationLocationId], references: [id])
+  quantity              Int
+  type                  OperationType
+  status                MoveStatus    @default(DRAFT)
+
+  // Links to parent documents
+  receiptId    Int?
+  receipt      Receipt?    @relation(fields: [receiptId], references: [id])
+  deliveryId   Int?
+  delivery     Delivery?   @relation(fields: [deliveryId], references: [id])
+  transferId   Int?
+  transfer     Transfer?   @relation(fields: [transferId], references: [id])
+  adjustmentId Int?
+  adjustment   Adjustment? @relation(fields: [adjustmentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Receipt {
+  id            Int         @id @default(autoincrement())
+  reference     String      @unique
+  warehouseId   Int
+  warehouse     Warehouse   @relation(fields: [warehouseId], references: [id])
+  sourceDoc     String?
+  supplier      String?
+  status        MoveStatus  @default(DRAFT)
+  scheduledDate DateTime?
+  stockMoves    StockMove[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Delivery {
+  id            Int         @id @default(autoincrement())
+  reference     String      @unique
+  warehouseId   Int
+  warehouse     Warehouse   @relation(fields: [warehouseId], references: [id])
+  sourceDoc     String?
+  customer      String?
+  status        MoveStatus  @default(DRAFT)
+  scheduledDate DateTime?
+  stockMoves    StockMove[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Transfer {
+  id                    Int         @id @default(autoincrement())
+  reference             String      @unique
+  sourceLocationId      Int
+  sourceLocation        Location    @relation("TransferSource", fields: [sourceLocationId], references: [id])
+  destinationLocationId Int
+  destinationLocation   Location    @relation("TransferDest", fields: [destinationLocationId], references: [id])
+  status                MoveStatus  @default(DRAFT)
+  scheduledDate         DateTime?
+  stockMoves            StockMove[]
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+}
+
+model Adjustment {
+  id          Int         @id @default(autoincrement())
+  reference   String      @unique
+  warehouseId Int
+  warehouse   Warehouse   @relation(fields: [warehouseId], references: [id])
+  reason      String?
+  status      MoveStatus  @default(DRAFT)
+  date        DateTime    @default(now())
+  stockMoves  StockMove[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }

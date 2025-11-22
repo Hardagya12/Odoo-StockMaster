@@ -68,7 +68,10 @@ const Dashboard = () => {
 
                 {/* KPIs */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-neo-pink border-3 border-black rounded-neo shadow-neo p-4 text-white">
+                    <div 
+                        className="bg-neo-pink border-3 border-black rounded-neo shadow-neo p-4 text-white cursor-pointer transition-transform hover:scale-105"
+                        onClick={() => navigate('/products')}
+                    >
                         <h3 className="text-xl font-black mb-2">Total Products</h3>
                         <p className="text-4xl font-black">{stats?.totalProducts || 0}</p>
                     </div>

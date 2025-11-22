@@ -2,7 +2,12 @@
 
 StockMaster is a modern, full-stack inventory management solution designed to streamline stock operations. It features a robust backend, a responsive neobrutalist frontend, and comprehensive features for managing products, warehouses, and stock movements.
 
-![StockMaster Dashboard](https://via.placeholder.com/800x400?text=StockMaster+Dashboard+Preview)
+![StockMaster Dashboard](https://odoo-stock-master.vercel.app/)
+
+## 📺 Demo Video
+[![StockMaster Demo Video](https://img.youtube.com/vi/MoeaTaQcLj4/0.jpg)](https://youtu.be/MoeaTaQcLj4)
+
+
 
 
 ## Team Members

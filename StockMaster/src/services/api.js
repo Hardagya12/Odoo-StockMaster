@@ -71,6 +71,14 @@ export const authService = {
         const response = await api.post('/auth/reset-password', { resetToken, newPassword });
         return response.data;
     },
+
+    updateProfile: async (userData) => {
+        const response = await api.put('/auth/profile', userData);
+        if (response.data.user) {
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
+        return response.data;
+    },
 };
 
 // Product service

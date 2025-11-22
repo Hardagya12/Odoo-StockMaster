@@ -68,22 +68,12 @@ const Receipts = () => {
         },
         { 
             key: 'supplier', 
-            label: 'From',
+            label: 'Vendor',
             render: (row) => row.supplier || 'Vendor'
         },
         { 
-            key: 'warehouse', 
-            label: 'To',
-            render: (row) => row.warehouse?.name || '-'
-        },
-        { 
-            key: 'supplier', 
-            label: 'Contact',
-            render: (row) => row.supplier || '-'
-        },
-        { 
             key: 'scheduledDate', 
-            label: 'Schedule Date',
+            label: 'Scheduled Date',
             render: (row) => row.scheduledDate ? new Date(row.scheduledDate).toLocaleDateString() : '-'
         },
         { 

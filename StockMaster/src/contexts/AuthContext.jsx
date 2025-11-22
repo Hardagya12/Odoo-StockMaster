@@ -22,6 +22,9 @@ export const AuthProvider = ({ children }) => {
         try {
             const data = await authService.login(credentials);
             setUser(data.user);
+            // Store user data and token in localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
             return { success: true, data };
         } catch (error) {
             return {
@@ -35,6 +38,9 @@ export const AuthProvider = ({ children }) => {
         try {
             const data = await authService.signup(userData);
             setUser(data.user);
+            // Store user data and token in localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
             return { success: true, data };
         } catch (error) {
             return {
@@ -45,8 +51,15 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        authService.logout();
+        authService.logout(); // This would typically clear server-side session/token if applicable
         setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    };
+
+    const updateUser = (userData) => {
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const value = {
@@ -54,6 +67,7 @@ export const AuthProvider = ({ children }) => {
         login,
         signup,
         logout,
+        updateUser,
         isAuthenticated: !!user,
         loading,
     };

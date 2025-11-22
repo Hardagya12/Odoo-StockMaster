@@ -26,6 +26,13 @@ const Dashboard = () => {
         }
     };
 
+    const getUserInitial = () => {
+        if (user?.name && user.name.length > 0) {
+            return user.name.charAt(0).toUpperCase();
+        }
+        return 'U';
+    };
+
     const receiptData = stats?.receipts || {
         toReceive: 0,
         late: 0,
@@ -52,11 +59,9 @@ const Dashboard = () => {
             <div className="bg-neo-white border-3 border-black rounded-neo shadow-neo-lg p-8">
                 <div className="mb-8 border-b-3 border-black pb-4">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-3xl font-black">Dashboard</h2>
-                            <div className="w-12 h-12 bg-neo-pink border-3 border-black rounded-neo shadow-neo flex items-center justify-center">
-                                <span className="text-2xl font-black text-white">A</span>
-                            </div>
+                        <h2 className="text-3xl font-black">Dashboard</h2>
+                        <div className="w-12 h-12 bg-neo-pink border-3 border-black rounded-neo shadow-neo flex items-center justify-center">
+                            <span className="text-2xl font-black text-white">{getUserInitial()}</span>
                         </div>
                     </div>
                 </div>
@@ -118,16 +123,6 @@ const Dashboard = () => {
                                 <p>{deliveryData.operations} operations</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* Legend */}
-                <div className="mt-8 bg-neo-offwhite border-3 border-black rounded-neo shadow-neo p-6">
-                    <h3 className="text-2xl font-black mb-4">Legend</h3>
-                    <div className="space-y-2 font-bold text-lg">
-                        <p><span className="text-gray-700">Late:</span> schedule date &lt; today's date</p>
-                        <p><span className="text-gray-700">Operations:</span> schedule date &gt; today's date</p>
-                        <p><span className="text-gray-700">Waiting:</span> Waiting for the stocks</p>
                     </div>
                 </div>
             </div>

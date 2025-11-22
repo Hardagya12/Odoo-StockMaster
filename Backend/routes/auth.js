@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const { sendOTPEmail } = require('../utils/emailService');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -181,12 +182,15 @@ router.post('/forgot-password', async (req, res) => {
             verified: false
         });
 
-        // In production, send OTP via email/SMS
-        // For now, we'll log it (remove in production)
-        console.log(`OTP for ${email}: ${otp} (expires in 10 minutes)`);
-
-        // TODO: Send OTP via email service (nodemailer, SendGrid, etc.)
-        // await sendOTPEmail(email, otp);
+        // Send OTP via email
+        try {
+            await sendOTPEmail(email, otp);
+            console.log(`OTP sent to ${email}: ${otp} (expires in 10 minutes)`);
+        } catch (emailError) {
+            console.error('Error sending OTP email:', emailError);
+            // Still return success but log the error
+            // In production, you might want to return an error here
+        }
 
         res.json({ 
             message: 'OTP has been sent to your email',
@@ -304,6 +308,43 @@ router.post('/reset-password', async (req, res) => {
     } catch (error) {
         console.error('Reset password error:', error);
         res.status(500).json({ message: 'Error resetting password' });
+    }
+});
+
+// Update Profile
+router.put('/profile', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.userId;
+
+        const { name } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ message: 'Name is required' });
+        }
+
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: { name },
+        });
+
+        res.json({
+            message: 'Profile updated successfully',
+            user: {
+                id: updatedUser.id,
+                email: updatedUser.email,
+                name: updatedUser.name,
+            },
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ message: 'Error updating profile' });
     }
 });
 

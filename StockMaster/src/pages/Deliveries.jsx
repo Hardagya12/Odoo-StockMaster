@@ -66,23 +66,13 @@ const Deliveries = () => {
             render: (row) => <span className="font-black">{row.reference}</span>
         },
         { 
-            key: 'warehouse', 
-            label: 'From',
-            render: (row) => row.warehouse?.name || '-'
-        },
-        { 
             key: 'customer', 
-            label: 'To',
+            label: 'Customer',
             render: (row) => row.customer || 'Customer'
         },
         { 
-            key: 'customer', 
-            label: 'Contact',
-            render: (row) => row.customer || '-'
-        },
-        { 
             key: 'scheduledDate', 
-            label: 'Schedule Date',
+            label: 'Scheduled Date',
             render: (row) => row.scheduledDate ? new Date(row.scheduledDate).toLocaleDateString() : '-'
         },
         { 

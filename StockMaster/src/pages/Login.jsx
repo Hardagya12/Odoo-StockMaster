@@ -87,9 +87,9 @@ const Login = () => {
                     </CardContent>
                 </form>
                 <CardFooter className="flex justify-between border-t-3 border-black bg-gray-50 rounded-b-[9px] py-4">
-                    <span className="text-sm font-bold text-gray-500">
+                    <Link to="/forgot-password" className="text-sm font-bold text-neo-pink hover:underline">
                         Forgot Password?
-                    </span>
+                    </Link>
                     <Link to="/signup" className="text-sm font-bold hover:text-neo-blue hover:underline">
                         Sign Up
                     </Link>

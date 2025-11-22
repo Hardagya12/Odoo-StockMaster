@@ -156,11 +156,20 @@ const Deliveries = () => {
                     </select>
                 </div>
 
+                <div className="mb-4">
+                    <input
+                        type="text"
+                        placeholder="Search deliveries..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full h-12 px-4 py-2 border-3 border-black rounded-neo shadow-neo font-bold focus:outline-none focus:ring-2 focus:ring-black"
+                        autoComplete="off"
+                    />
+                </div>
+
                 <DataTable
                     data={deliveries}
                     columns={columns}
-                    searchable
-                    onSearch={setSearchTerm}
                     kanbanView
                     onKanbanToggle={() => {}}
                     statusColumn="status"

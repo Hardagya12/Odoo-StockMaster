@@ -21,7 +21,7 @@ const ProfileSidebar = () => {
         <div className="w-64 bg-neo-white border-r-3 border-black shadow-neo min-h-screen">
             <div className="p-6 border-b-3 border-black">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-neo-pink border-3 border-black rounded-neo shadow-neo flex items-center justify-center">
+                    <div className="w-12 h-12 flex-shrink-0 aspect-square bg-neo-pink rounded-full shadow-neo flex items-center justify-center">
                         <span className="text-xl font-black text-white">
                             {user?.name?.charAt(0).toUpperCase() || 'U'}
                         </span>

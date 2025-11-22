@@ -21,9 +21,9 @@ const Button = React.forwardRef(({ className, variant = 'primary', size = 'defau
         <button
             ref={ref}
             className={cn(
-                'inline-flex items-center justify-center whitespace-nowrap rounded-neo border-3 border-black font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:pointer-events-none disabled:opacity-50',
+                'inline-flex items-center justify-center whitespace-nowrap rounded-neo border-3 border-black font-bold transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black disabled:pointer-events-none disabled:opacity-50',
                 'active:translate-x-[2px] active:translate-y-[2px] active:shadow-none',
-                variant !== 'ghost' && 'shadow-neo hover:-translate-y-1 hover:translate-x-0 hover:shadow-neo-lg',
+                variant !== 'ghost' && 'shadow-neo hover:-translate-y-0.5 hover:shadow-neo-lg',
                 variants[variant],
                 sizes[size],
                 className

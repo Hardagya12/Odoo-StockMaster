@@ -35,7 +35,7 @@ const Badge = ({ status, className }) => {
     return (
         <span
             className={cn(
-                'px-3 py-1 rounded-neo font-bold text-sm border-2 border-black',
+                'px-3 py-1 rounded-neo font-bold text-sm border-2 border-black transition-all duration-150 hover:scale-105',
                 config.bg,
                 config.text,
                 className
@@ -47,4 +47,3 @@ const Badge = ({ status, className }) => {
 };
 
 export default Badge;
-

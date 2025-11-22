@@ -60,7 +60,7 @@ const Dashboard = () => {
                 <div className="mb-8 border-b-3 border-black pb-4">
                     <div className="flex items-center justify-between">
                         <h2 className="text-3xl font-black">Dashboard</h2>
-                        <div className="w-12 h-12 bg-neo-pink border-3 border-black rounded-neo shadow-neo flex items-center justify-center">
+                        <div className="w-12 h-12 flex-shrink-0 aspect-square bg-neo-pink rounded-full shadow-neo flex items-center justify-center">
                             <span className="text-2xl font-black text-white">{getUserInitial()}</span>
                         </div>
                     </div>

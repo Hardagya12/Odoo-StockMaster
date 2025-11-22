@@ -27,8 +27,28 @@ model Category {
   parentId    Int?
   parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
   @@index([parentId])
+}
+
+// Product model for inventory items
+model Product {
+  id            Int       @id @default(autoincrement())
+  sku           String    @unique
+  name          String
+  description   String?
+  categoryId    Int?
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  unitOfMeasure String // e.g., "kg", "pcs", "liter"
+  unitPrice     Float     @default(0)
+  minStock      Int       @default(0) // Minimum stock threshold for alerts
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([sku])
+  @@index([categoryId])
 }

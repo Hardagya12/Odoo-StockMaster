@@ -1,26 +1,35 @@
 {
-  "name": "backend",
+  "name": "odoo-stockmaster-backend",
   "version": "1.0.0",
+  "description": "Backend for StockMaster inventory management system",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node prisma/seed.js",
+    "migrate": "npx prisma migrate deploy",
+    "generate": "npx prisma generate",
+    "build": "npm install && npx prisma generate && npx prisma migrate deploy"
   },
+  "keywords": ["inventory", "stock", "management"],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
+    "@prisma/client": "^6.1.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^7.0.10",
-    "nodemon": "^3.1.11",
-    "pg": "^8.16.3"
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
-    "@prisma/client": "^6.19.0",
-    "prisma": "^6.19.0"
+    "nodemon": "^3.1.7",
+    "prisma": "^6.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

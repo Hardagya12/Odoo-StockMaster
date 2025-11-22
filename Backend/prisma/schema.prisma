@@ -52,3 +52,34 @@ model Product {
   @@index([sku])
   @@index([categoryId])
 }
+
+// Warehouse model for multi-location inventory
+model Warehouse {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  code      String     @unique
+  address   String?
+  capacity  Int? // Optional warehouse capacity
+  isActive  Boolean    @default(true)
+  locations Location[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([code])
+}
+
+// Location model for warehouse zones/racks/shelves
+model Location {
+  id          Int       @id @default(autoincrement())
+  name        String
+  code        String    @unique
+  warehouseId Int
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  type        String    @default("ZONE") // ZONE, RACK, SHELF, BIN
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([warehouseId, name])
+  @@index([code])
+  @@index([warehouseId])
+}
